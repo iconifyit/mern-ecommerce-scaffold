@@ -54,13 +54,14 @@ $ node ./cli.js -m <modelName> -d
 ### Args: 
 
 ```
--m <string> : The name of the module to create.
--d <void>   : Dry run (outputs to console, no files created).
--s <void>   : Stage the scaffold (created in temporary folder).    
--i <void>   : Installs an already staged module.
--c <void>   : Deletes a staged module staged module.
--u <void>   : Un-installs an already installed module.            
--h <void>   : Show this help.
+-m <string>    : The name of the module to create.
+-d <void>      : Dry run (outputs to console, no files created).
+-s <void>      : Stage the scaffold (created in temporary folder).    
+-i <void>      : Installs an already staged module.
+-c <void>      : Deletes a staged module staged module.
+-u <void>      : Un-installs an already installed module.            
+--force <void> : Over-rides an existing module.
+-h <void>      : Show this help.
 ```
 
 ## Post-install
