@@ -1,0 +1,55 @@
+/*
+ *
+ * List {{ModelNamePlural}}
+ *
+ */
+
+import React from 'react';
+
+import { connect } from 'react-redux';
+
+import actions from '../../actions';
+
+import {{ModelName}}List from '../../components/Manager/{{ModelName}}List';
+import SubPage from '../../components/Manager/SubPage';
+import LoadingIndicator from '../../components/Common/LoadingIndicator';
+import NotFound from '../../components/Common/NotFound';
+
+class List extends React.PureComponent {
+  componentDidMount() {
+    this.props.fetch{{ModelNamePlural}}();
+  }
+
+  render() {
+    const { history, {{ModelNamePluralLowerCase}}, isLoading } = this.props;
+    const items = {{ModelNamePluralLowerCase}};
+
+    return (
+      <>
+        <SubPage
+          title='{{ModelNamePlural}}'
+          actionTitle='Add'
+          handleAction={() => history.push('/dashboard/{{ModelNameLowerCase}}/add')}
+        >
+          {isLoading ? (
+            <LoadingIndicator inline />
+          ) : {{ModelNamePluralLowerCase}}.length > 0 ? (
+            <{{ModelName}}List {{ModelNamePluralLowerCase}}={items} />
+          ) : (
+            <NotFound message='no {{ModelNamePluralLowerCase}} found.' />
+          )}
+        </SubPage>
+      </>
+    );
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    {{ModelNamePluralLowerCase}}: state.{{ModelNameLowerCase}}.{{ModelNamePluralLowerCase}},
+    isLoading: state.{{ModelNameLowerCase}}.isLoading,
+    user: state.account.user
+  };
+};
+
+export default connect(mapStateToProps, actions)(List);

@@ -1,0 +1,283 @@
+/*
+ *
+ * {{ModelName}} actions
+ *
+ */
+
+import { goBack } from 'connected-react-router';
+import { success } from 'react-notification-system-redux';
+import axios from 'axios';
+
+import {
+    FETCH_{{ModelNamePluralUpperCase}},
+    FETCH_STORE_{{ModelNamePluralUpperCase}},
+    FETCH_{{ModelNameUpperCase}},
+    {{ModelNameUpperCase}}_CHANGE,
+    {{ModelNameUpperCase}}_EDIT_CHANGE,
+    FETCH_{{ModelNamePluralUpperCase}}_SELECT,
+    SET_{{ModelNameUpperCase}}_FORM_ERRORS,
+    SET_{{ModelNameUpperCase}}_FORM_EDIT_ERRORS,
+    ADD_{{ModelNameUpperCase}},
+    REMOVE_{{ModelNameUpperCase}},
+    SET_{{ModelNamePluralUpperCase}}_LOADING,
+    RESET_{{ModelNameUpperCase}}
+} from './constants';
+
+import handleError from '../../utils/error';
+import {
+    formatSelectOptions,
+    unformatSelectOptions
+} from '../../helpers/select';
+import { allFieldsValidation } from '../../utils/validation';
+
+export const {{ModelNameLowerCase}}Change = (name, value) => {
+    let formData = {};
+    formData[name] = value;
+
+    return {
+        type: {{ModelNameUpperCase}}_CHANGE,
+        payload: formData
+    };
+};
+
+export const {{ModelNameLowerCase}}EditChange = (name, value) => {
+    let formData = {};
+    formData[name] = value;
+
+    return {
+        type: {{ModelNameUpperCase}}_EDIT_CHANGE,
+        payload: formData
+    };
+};
+
+export const {{ModelNameLowerCase}}Select = value => {
+    return {
+        type: {{ModelNameUpperCase}}_SELECT,
+        payload: value
+    };
+};
+
+export const reset{{ModelName}} = () => {
+    return async (dispatch, getState) => {
+        dispatch({ type: RESET_{{ModelNameUpperCase}} });
+    };
+};
+
+// fetch store {{ModelNamePluralLowerCase}} api
+export const fetchStore{{ModelNamePlural}} = () => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await axios.get(`/api/{{ModelNameLowerCase}}/list`);
+
+            dispatch({
+                type: FETCH_STORE_{{ModelNamePluralUpperCase}},
+                payload: response.data.{{ModelNamePluralLowerCase}}
+            });
+        } catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+// fetch {{ModelNamePluralLowerCase}} api
+export const fetch{{ModelNamePlural}} = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: SET_{{ModelNamePluralUpperCase}}_LOADING, payload: true });
+            const response = await axios.get(`/api/{{ModelNameLowerCase}}`);
+
+            dispatch({
+                type: FETCH_{{ModelNamePluralUpperCase}},
+                payload: response.data.{{ModelNamePluralLowerCase}}
+            });
+        } catch (error) {
+            handleError(error, dispatch);
+        } finally {
+            dispatch({ type: SET_{{ModelNamePluralUpperCase}}_LOADING, payload: false });
+        }
+    };
+};
+
+// fetch {{ModelNameLowerCase}} api
+export const fetch{{ModelName}} = id => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await axios.get(`/api/{{ModelNameLowerCase}}/${{#bracket}}id{{/bracket}}`);
+            dispatch({
+                type: FETCH_{{ModelNameUpperCase}},
+                payload: response.data.{{ModelNameLowerCase}}
+            });
+        } catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+// add {{ModelNameLowerCase}} api
+export const add{{ModelName}} = () => {
+    return async (dispatch, getState) => {
+        try {
+            const rules = {
+                name: 'required' 
+            };
+
+            const {{ModelNameLowerCase}} = getState().{{ModelNameLowerCase}}.{{ModelNameLowerCase}}FormData;
+
+            const new{{ModelName}} = {
+                name: {{ModelNameLowerCase}}.name 
+            };
+
+            const { isValid, errors } = allFieldsValidation(new{{ModelName}}, rules, {
+                'required.name': 'Name is required.'
+            });
+
+            if (!isValid) {
+                return dispatch({ type: SET_{{ModelNameUpperCase}}_FORM_ERRORS, payload: errors });
+            }
+
+            const response = await axios.post(`/api/{{ModelNameLowerCase}}/add`, new{{ModelName}});
+
+            const successfulOptions = {
+                title: `${{#bracket}}response.data.message{{/bracket}}`,
+                position: 'tr',
+                autoDismiss: 1
+            };
+
+            if (response.data.success === true) {
+                dispatch(success(successfulOptions));
+                dispatch({
+                    type: ADD_{{ModelNameUpperCase}},
+                    payload: response.data.{{ModelNameLowerCase}}
+                });
+                dispatch(reset{{ModelName}}());
+                dispatch(goBack());
+            }
+        } catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+// update {{ModelNameLowerCase}} api
+export const update{{ModelName}} = () => {
+    return async (dispatch, getState) => {
+        try {
+            const rules = {
+                name: 'required' 
+            };
+
+            const {{ModelNameLowerCase}} = getState().{{ModelNameLowerCase}}.{{ModelNameLowerCase}};
+
+            const new{{ModelName}} = {
+                name: {{ModelNameLowerCase}}.name 
+            };
+
+            const { isValid, errors } = allFieldsValidation(new{{ModelName}}, rules, {
+                'required.name': 'Name is required.' 
+            });
+
+            if (! isValid) {
+                return dispatch({
+                    type: SET_{{ModelNameUpperCase}}_FORM_EDIT_ERRORS,
+                    payload: errors
+                });
+            }
+
+            const id = {{ModelNameLowerCase}}._id;
+            const response = await axios.put(`/api/{{ModelNameLowerCase}}/${id}`, {
+                {{ModelNameLowerCase}}: new{{ModelName}}
+            });
+
+            const successfulOptions = {
+                title: `${{#bracket}}response.data.message{{/bracket}}`,
+                position: 'tr',
+                autoDismiss: 1
+            };
+
+            if (response.data.success === true) {
+                dispatch(success(successfulOptions));
+                dispatch(reset{{ModelName}}());
+                dispatch(goBack());
+            }
+        } 
+        catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+// activate {{ModelNameLowerCase}} api
+export const activate{{ModelName}} = (id, value) => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await axios.put(`/api/{{ModelNameLowerCase}}/${id}/active`, {
+                {{ModelNameLowerCase}}: {
+                    isActive: value
+                }
+            });
+
+            const successfulOptions = {
+                title: `${response.data.message}`,
+                position: 'tr',
+                autoDismiss: 1
+            };
+
+            if (response.data.success === true) {
+                dispatch(success(successfulOptions));
+            }
+        } 
+        catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+// delete {{ModelNameLowerCase}} api
+export const delete{{ModelName}} = id => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await axios.delete(`/api/{{ModelNameLowerCase}}/delete/${id}`);
+
+            const successfulOptions = {
+                title: `${response.data.message}`,
+                position: 'tr',
+                autoDismiss: 1
+            };
+
+            if (response.data.success == true) {
+                dispatch(success(successfulOptions));
+                dispatch({
+                    type: REMOVE_{{ModelNameUpperCase}},
+                    payload: id
+                });
+                dispatch(goBack());
+            }
+        } 
+        catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};
+
+
+export const fetch{{ModelNamePlural}}Select = () => {
+    return async (dispatch, getState) => {
+        try {
+            const response = await axios.get(`/api/{{ModelNameLowerCase}}/list/select`);
+
+            console.log('{{ModelNamePlural}}', response)
+            console.log(
+                'formatSelectOptions(response.data.{{ModelNamePluralLowerCase}}, true)', 
+                formatSelectOptions(response.data.{{ModelNamePluralLowerCase}}, true)
+            )
+
+            dispatch({
+                type: FETCH_{{ModelNamePluralUpperCase}}_SELECT,
+                payload: formatSelectOptions(response.data.{{ModelNamePluralLowerCase}}, false)
+            });
+        } 
+        catch (error) {
+            handleError(error, dispatch);
+        }
+    };
+};

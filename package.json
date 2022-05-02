@@ -1,0 +1,21 @@
+{
+    "name": "mern-ecomm-scaffold",
+    "version": "1.0.0",
+    "description": "Scaffold utility for MERN E-commerce",
+    "main": "index.js",
+    "scripts": {
+        "test": "mkdirp test && node cli.js Foobar",
+        "make": "node cli.js"
+    },
+    "author": "scott <scott@atomiclotus.net>",
+    "license": "MIT",
+    "dependencies": {
+        "colors": "^1.4.0",
+        "handlebars": "^4.7.7",
+        "inflected": "^2.1.0",
+        "lodash": "^4.17.21",
+        "minimist": "^1.2.6",
+        "mkdirp": "^1.0.4",
+        "tracer": "^1.1.5"
+    }
+}

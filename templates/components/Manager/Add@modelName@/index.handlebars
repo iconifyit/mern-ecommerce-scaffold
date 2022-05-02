@@ -1,0 +1,58 @@
+/**
+ *
+ * Add{{ModelName}}
+ *
+ */
+
+import React from 'react';
+
+const uuidv4 = require('uuid/v4');
+
+import Button from '../../Common/Button';
+import BaseManagerForm from '../BaseManagerForm';
+
+const Add{{ModelName}} = props => {
+    const {
+        user,
+        {{ModelNameLowerCase}}FormData,
+        formErrors,
+        {{ModelNameLowerCase}}Change,
+        add{{ModelName}},
+    } = props;
+
+    const handleSubmit = event => {
+        event.preventDefault();
+        add{{ModelName}}();
+    };
+
+    /* NOTE: slewis 2022-04-30
+     * This approach is necessary to avoid bracket 
+     * errors when Handlebars auto-generates the code. 
+     */
+    const theEntity = {{ModelNameLowerCase}}FormData;
+    const entityChange = {{ModelNameLowerCase}}Change;
+    const addItem = add{{ModelName}};
+
+    theEntity.uuid = uuidv4();
+
+    return (
+        <BaseManagerForm
+            entity={theEntity}
+            handleSubmit={handleSubmit}
+            formErrors={formErrors}
+            entityChange={entityChange}
+            user={user}
+            hasPrice={false}
+            hasParent={false}
+            hasFile={false}
+            hasDimensions={false}
+            hasCategory={false}
+        >
+        <div className='add-{{ModelNameLowerCase}}-actions'>
+            <Button type='submit' text='Add {{ModelName}}' />
+        </div>
+        </BaseManagerForm>
+    );
+};
+
+export default Add{{ModelName}};

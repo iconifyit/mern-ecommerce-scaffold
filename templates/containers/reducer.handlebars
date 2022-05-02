@@ -1,0 +1,119 @@
+/*
+ *
+ * {{ModelName}} reducer
+ *
+ */
+
+import {
+    FETCH_{{ModelNamePluralUpperCase}},
+    FETCH_{{ModelNamePluralUpperCase}}_SELECT,
+    FETCH_STORE_{{ModelNamePluralUpperCase}},
+    FETCH_{{ModelNameUpperCase}},
+    {{ModelNameUpperCase}}_CHANGE,
+    {{ModelNameUpperCase}}_EDIT_CHANGE,
+    SET_{{ModelNameUpperCase}}_FORM_ERRORS,
+    SET_{{ModelNameUpperCase}}_FORM_EDIT_ERRORS,
+    ADD_{{ModelNameUpperCase}},
+    REMOVE_{{ModelNameUpperCase}},
+    SET_{{ModelNamePluralUpperCase}}_LOADING,
+    RESET_{{ModelNameUpperCase}}
+} from './constants';
+
+const initialState = {
+    {{ModelNamePluralLowerCase}}: [],
+    {{ModelNamePluralLowerCase}}Select: [],
+    store{{ModelNamePlural}}: [],
+    {{ModelNameLowerCase}}: {
+        _id: ''
+    },
+    {{ModelNameLowerCase}}FormData: {
+        name: '',
+        tags: '',
+        isActive: true
+    },
+    formErrors: {},
+    editFormErrors: {},
+    isLoading: false
+};
+
+const {{ModelNameLowerCase}}Reducer = (state = initialState, action) => {
+    switch (action.type) {
+        case FETCH_{{ModelNamePluralUpperCase}}:
+            return {
+                ...state,
+                {{ModelNamePluralLowerCase}}: action.payload
+            };
+        case FETCH_STORE_{{ModelNamePluralUpperCase}}:
+            return {
+                ...state,
+                store{{ModelNamePlural}}: action.payload
+            };
+        case FETCH_{{ModelNamePluralUpperCase}}_SELECT:
+            return {
+                ...state,
+                {{ModelNamePluralLowerCase}}Select: action.payload
+            };
+        case FETCH_{{ModelNameUpperCase}}:
+            return {
+                ...state,
+                {{ModelNameLowerCase}}: action.payload
+            };
+        case ADD_{{ModelNameUpperCase}}:
+            return {
+                ...state,
+                {{ModelNamePluralLowerCase}}: [...state.{{ModelNamePluralLowerCase}}, action.payload]
+            };
+        case REMOVE_{{ModelNameUpperCase}}:
+            const index = state.{{ModelNamePluralLowerCase}}.findIndex(b => b._id === action.payload);
+            return {
+                ...state,
+                {{ModelNamePluralLowerCase}}: [
+                    ...state.{{ModelNamePluralLowerCase}}.slice(0, index),
+                    ...state.{{ModelNamePluralLowerCase}}.slice(index + 1)
+                ]
+            };
+        case {{ModelNameUpperCase}}_CHANGE:
+            return {
+                ...state,
+                {{ModelNameLowerCase}}FormData: {
+                    ...state.{{ModelNameLowerCase}}FormData,
+                    ...action.payload
+                }
+            };
+        case {{ModelNameUpperCase}}_EDIT_CHANGE:
+            return {
+                ...state,
+                {{ModelNameLowerCase}}: {
+                    ...state.{{ModelNameLowerCase}},
+                    ...action.payload
+                }
+            };
+        case SET_{{ModelNameUpperCase}}_FORM_ERRORS:
+            return {
+                ...state,
+                formErrors: action.payload
+            };
+        case SET_{{ModelNameUpperCase}}_FORM_EDIT_ERRORS:
+            return {
+                ...state,
+                editFormErrors: action.payload
+            };
+        case SET_{{ModelNamePluralUpperCase}}_LOADING:
+            return {
+                ...state,
+                isLoading: action.payload
+            };
+        case RESET_{{ModelNameUpperCase}}:
+            return {
+                ...state,
+                {{ModelNameLowerCase}}FormData: initialState.{{ModelNameLowerCase}}FormData,
+                {{ModelNameLowerCase}}: initialState.{{ModelNameLowerCase}},
+                formErrors: initialState.formErrors,
+                editFormErrors: initialState.editFormErrors
+            };
+        default:
+            return state;
+    }
+};
+
+export default {{ModelNameLowerCase}}Reducer;
