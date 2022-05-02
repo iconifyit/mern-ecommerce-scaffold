@@ -10,6 +10,16 @@ Scaffold uses a two-step approach so that you are in complete control and no cha
 
 **CAUTION** Scaffold does include a `force` feature but only to over-ride modules it created. If there is no module with the same name in Staging, it will not overwrite an exist module created by other means. It will however, overwrite whatever staged module you created & installed with the same name previously. Previously scaffolded modules, that have not been installed to the live code, can be overwritten by simply running Scaffold with the same name again.
 
+## Installation
+
+**NOTE** I have not written an installer such as npm yet but will very soon. For the time-being, you will need to install Scaffold manually, but I promise, it is very simple. 
+
+- Clone this repo to the root folder of your MERN E-commerce project.
+- Copy the `generics` folder to `./server/generics`
+- Copy the `BaseManagerForm` module to `./client/app/Components/Manager/BaseManagerForm`
+
+Scaffold includes a layer of abstrction that MERN E-commerce does not, however, this layer can be used right alongside the existing architecture and both will work. The changes are, specifically, an API Router superclass, a Schema superclass, and ManagerForm superclass. These additions are NOT breaking changes to MERN E-commerce and can be easily added or removed without affecting the existing code.
+
 ## Usage
 
 Scaffold is a two-step process. First, you stage a module by running:
