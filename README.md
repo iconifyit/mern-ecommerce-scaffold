@@ -62,3 +62,15 @@ After running install, you will need to do the following:
 - Add credits routes to server/routes/api/index.js
 - Add link to client/containers/Dashboard/links.json
 - Add Credit import to client/app/components/Manager/Dashboard/Admin.js
+
+## Examples
+
+You can view example output from Scaffold in the `stage` directory in this repo. 
+
+## About Scaffold
+
+Scaffold uses the Handlebars templating engine to generate the JavaScript and ReactJS files. The Handlebars templates are stored in the `templates` directory. I chose Handlebars because it is very easy to use and allowed me to write the templates in a way that is easy to read and maintain.
+
+# Supporting my Work
+
+If you find my work helpful, you can thank me by making a donation to the critically-important work of the [Borneo Orangutan Survival](https://bosa.secure.force.com/#!/donation) project
