@@ -87,4 +87,4 @@ If you find my work helpful, you can thank me by making a donation to the critic
 
 ## Credit
 
-Scaffold is based on the wonderful work of [https://github.com/mohamedsamara](Mohamed Samara) and the [https://github.com/mohamedsamara/mern-ecommerce](MERN E-commerce) project.
+Scaffold is based on the wonderful work of [Mohamed Samara](https://github.com/mohamedsamara) and the [MERN E-commerce](https://github.com/mohamedsamara/mern-ecommerce) project.
