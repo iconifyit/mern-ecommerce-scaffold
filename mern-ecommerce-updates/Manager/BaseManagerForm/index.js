@@ -1,14 +1,11 @@
 /**
  *
- * ProductForm
+ * BaseManagerForm
  *
  */
 
 import React from 'react';
-
-const uuidv4 = require('uuid/v4');
 import { Row, Col } from 'reactstrap';
-
 import Input from '../../Common/Input';
 import Switch from '../../Common/Switch';
 import SelectOption from '../../Common/SelectOption';
@@ -49,19 +46,6 @@ const BaseManagerForm = props => {
                         onInputChange={(name, value) => {
                             entityChange(name, value);
                         }}
-                    />
-                </Col>
-                <Col xs='12' lg='6'>
-                    <Input
-                        type={'text'}
-                        label={'UUID'}
-                        name={'uuid'}
-                        placeholder={'UUID (IconJar)'}
-                        value={entity.uuid || 'undefined'}
-                        onInputChange={(name, value) => {
-                            entityChange(name, value);
-                        }}
-                        readonly
                     />
                 </Col>
             </Row>

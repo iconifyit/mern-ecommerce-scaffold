@@ -48,7 +48,6 @@ class BaseRouter {
         this.listSelect = this.listSelect.bind(this);
         this.doLookups = this.doLookups.bind(this);
         this.getRouter = this.getRouter.bind(this);
-        this.validate = this.validate.bind(this);
         this.getAll = this.getAll.bind(this);
         this.getById = this.getById.bind(this);
         this.update = this.update.bind(this);
@@ -58,22 +57,6 @@ class BaseRouter {
 
     getRouter() {
         return this.router;
-    }
-
-    validate(validations) {
-        return async (req, res, next) => {
-            for (let validation of validations) {
-                const result = await validation.run(req);
-                if (result.errors.length) break;
-            }
-    
-            const errors = validationResult(req);
-            if (errors.isEmpty()) {
-                return next();
-            }
-    
-            res.status(400).json({ errors: errors.array() });
-        };
     }
 
     async doLookups(route, itemDoc) {
@@ -99,7 +82,7 @@ class BaseRouter {
             }
         }
         catch(e) {
-            console.error('doAggregations error', e)
+            console.error('doLookups error', e)
         }
         return itemDoc;
     }
