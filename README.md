@@ -71,6 +71,10 @@ You can view example output from Scaffold in the `stage` directory in this repo.
 
 Scaffold uses the Handlebars templating engine to generate the JavaScript and ReactJS files. The Handlebars templates are stored in the `templates` directory. I chose Handlebars because it is very easy to use and allowed me to write the templates in a way that is easy to read and maintain.
 
-# Supporting my Work
+### Usage Supporting my Work
 
 If you find my work helpful, you can thank me by making a donation to the critically-important work of the [Borneo Orangutan Survival](https://bosa.secure.force.com/#!/donation) project
+
+## Credit
+
+Scaffold is based on the wonderful work of [https://github.com/mohamedsamara](Mohamed Samara) and the [https://github.com/mohamedsamara/mern-ecommerce](MERN E-commerce) project.
