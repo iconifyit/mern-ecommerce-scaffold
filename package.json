@@ -1,11 +1,10 @@
 {
-    "name": "mern-ecomm-scaffold",
+    "name": "@atomiclotus/mern-ecomm-scaffold",
     "version": "1.0.0",
-    "description": "Scaffold utility for MERN E-commerce",
-    "main": "index.js",
+    "description": "Scaffold utility for MERN E-commerce by https://github.com/mohamedsamara",
+    "main": "cli.js",
     "scripts": {
-        "test": "mkdirp test && node cli.js Foobar",
-        "make": "node cli.js"
+        "test": "mkdirp test && node cli.js -m Foobar -d"
     },
     "author": "scott <scott@atomiclotus.net>",
     "license": "MIT",
@@ -17,5 +16,24 @@
         "minimist": "^1.2.6",
         "mkdirp": "^1.0.4",
         "tracer": "^1.1.5"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/iconifyit/mern-ecomm-scaffold/issues",
+        "email": "scott@atomiclotus.net"
+      },
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/iconifyit/mern-ecomm-scaffold.git"
+      },
+      "keywords": [
+        "scaffold",
+        "mern",
+        "ecomm",
+        "ecommerce",
+        "e-commerce",
+        "e-commerce-scaffold",
+        "mern-ecommerce",
+        "mern-e-commerce"
+      ],
+      "homepage": "https://github.com/iconifyit/mern-ecomm-scaffold#readme"
 }
