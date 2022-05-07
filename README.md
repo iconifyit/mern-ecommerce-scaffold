@@ -64,6 +64,20 @@ $ node ./cli.js -m <modelName> -d
 -h <void>      : Show this help.
 ```
 
+### Configuration:
+
+You can also provide a custom configuration file to define the model's schema and manager form fields. The configuration file should be saved in `./config/{modelName}.config.json`. The configuration file is comprised of two sections: `fields` and `schemaFields`. The `fields` section defines the fields that will be added to the manager form. The `schemaFields` section defines the fields that will be added to the schema. The schemaFields follow the same rules as if you were editing the schema directly. The `fields` JSON objects have the following properties:
+
+- `name`: The name of the field.
+- `type`: The type of the field, i.e., any valid HTML input type.
+- `label`: The label that will be displayed to the user.
+- `options`: An array of options that will be displayed to the user if the fields is a select, checkbox, or radio button.
+- `required`: A boolean value that determines if the field is required.
+- `default`: The default value for the field.
+- `placeholder`: The placeholder text that will be displayed to the user.
+
+**NOTE** I will add more features to the configuration file in the future including more fine-grained control over `fields` including adding validators, and any supported HTML attributes.
+
 ## Post-install
 
 After running install, you will need to do the following:

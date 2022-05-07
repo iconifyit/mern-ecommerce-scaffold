@@ -57,8 +57,20 @@ class HandleParser {
             }
         });
 
+        this.handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+        });
+
         this.handlebars.registerHelper('eq', (a, b) => {
             return a === b;
+        });
+
+        this.handlebars.registerHelper('notEmpty', (a) => {
+            return typeof a !== 'undefined' && a !== null && a !== '';
+        });
+
+        this.handlebars.registerHelper('has', (a, b) => {
+            return a.indexOf(b) > -1;
         });
 
         this.handlebars.registerHelper('typeof', (value) => {

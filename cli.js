@@ -23,7 +23,6 @@ const fs = require('fs'),
         ucWords
     } = require('./utils');
 
-
 const timestamp = new Date().getTime();
 const logger = getLogger(`./logs/${timestamp}.log`);
 
@@ -53,6 +52,14 @@ let IS_UNINSTALL = args.u || false;
 let IS_STAGING = args.s || (!IS_DRY_RUN && !IS_INSTALL && !IS_UNINSTALL);
 let IS_CLEAN = args.c || false;
 let IS_FORCE = args.force || false;
+
+let config = {};
+try {
+    config = require(`./configs/${modelName.toLowerCase()}.config.js`, 'utf8');
+}
+catch (e) {
+    logger.error(e);
+}
 
 if (IS_DRY_RUN) {
     IS_INSTALL = false;
@@ -90,7 +97,7 @@ templates = require('./templates.js')(ucWords(modelName));
 */
 const { isPolluted, artifacts } = pollutionTest(templates);
 if (!IS_UNINSTALL && isPolluted) {
-    if (! IS_FORCE && IS_STAGING) {
+    if (!IS_FORCE && IS_STAGING) {
         logger.log(
             `Some artifacts for ${modelName} already exist. Please check your files and try again.`
         );
@@ -147,7 +154,9 @@ templates.forEach((template) => {
                 ModelNameLowerCase: modelName.toLowerCase(),
                 ModelNamePlural: Inflector.pluralize(modelName),
                 ModelNamePluralUpperCase: Inflector.pluralize(modelName).toUpperCase(),
-                ModelNamePluralLowerCase: Inflector.pluralize(modelName).toLowerCase()
+                ModelNamePluralLowerCase: Inflector.pluralize(modelName).toLowerCase(),
+                fields: config.fields,
+                schemaFields: config.schemaFields
             }).toString();
 
             if (IS_STAGING) {

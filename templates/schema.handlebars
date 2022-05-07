@@ -16,15 +16,15 @@ const {{ModelName}}Schema = new Schema({
         type: Schema.ObjectId,
         auto: true
     },
-    name: {
-        type: String,
-        trim: true
+    {{#each schemaFields}}
+    {{name}}: {
+        type: {{type}},
+        required: {{#if required}}{{required}}{{else}}false{{/if}},
+        {{#if (notEmpty default)}}
+        default: {{default}},
+        {{/if}}
     },
-    slug: {
-        type: String,
-        slug: 'name',
-        unique: true
-    },
+    {{/each}}
     isActive: {
         type: Boolean,
         default: true

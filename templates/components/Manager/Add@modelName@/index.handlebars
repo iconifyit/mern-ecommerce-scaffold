@@ -9,7 +9,10 @@ import React from 'react';
 const uuidv4 = require('uuid/v4');
 
 import Button from '../../Common/Button';
-import BaseManagerForm from '../BaseManagerForm';
+import { Row, Col } from 'reactstrap';
+import Input from '../../Common/Input';
+import Switch from '../../Common/Switch';
+import SelectOption from '../../Common/SelectOption';
 
 const Add{{ModelName}} = props => {
     const {
@@ -29,29 +32,96 @@ const Add{{ModelName}} = props => {
      * This approach is necessary to avoid bracket 
      * errors when Handlebars auto-generates the code. 
      */
-    const theEntity = {{ModelNameLowerCase}}FormData;
+    const entity = {{ModelNameLowerCase}}FormData;
     const entityChange = {{ModelNameLowerCase}}Change;
     const addItem = add{{ModelName}};
 
-    theEntity.uuid = uuidv4();
+    entity.uuid = uuidv4();
 
     return (
-        <BaseManagerForm
-            entity={theEntity}
-            handleSubmit={handleSubmit}
-            formErrors={formErrors}
-            entityChange={entityChange}
-            user={user}
-            hasPrice={false}
-            hasParent={false}
-            hasFile={false}
-            hasDimensions={false}
-            hasCategory={false}
-        >
-        <div className='add-{{ModelNameLowerCase}}-actions'>
-            <Button type='submit' text='Add {{ModelName}}' />
-        </div>
-        </BaseManagerForm>
+        <form onSubmit={handleSubmit} noValidate>
+            {{#each fields}}
+                <Row>
+                    {{#ifEquals type "text"}}
+                    <Col xs='12' lg='6'>
+                        <Input
+                            type={'text'}
+                            error={formErrors['{{name}}']}
+                            label={'{{label}}'}
+                            name={'{{name}}'}
+                            placeholder={'{{placeholder}}'}
+                            value={ entity.{{name}} }
+                            onInputChange={(name, value) => {
+                                entityChange(name, value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "number"}}
+                    <Col xs='12' lg='6'>
+                        <Input
+                            type={'number'}
+                            error={formErrors['{{name}}']}
+                            label={'{{label}}'}
+                            name={'{{name}}'}
+                            placeholder={'{{placeholder}}'}
+                            value={ entity.{{name}} }
+                            onInputChange={(name, value) => {
+                                entityChange(name, value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "boolean"}}
+                    <Col xs='12' lg='6'>
+                        <Switch
+                            id={'{{name}}'}
+                            name={'{{name}}'}
+                            label={'{{label}}'}
+                            checked={ entity.{{name}} }
+                            toggleCheckboxChange={value => entityChange('{{name}}', value)}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "select"}}
+                    <Col xs='12' lg='6'>
+                        <SelectOption
+                            error={formErrors['{{name}}']}
+                            label={ '{{label}}' }
+                            multi={false}
+                            value={ entity.{{name}} }
+                            options={ {{options}} }
+                            handleSelectChange={value => {
+                                entityChange('{{name}}', value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "radio"}}
+                    {{#each options as |option|}} 
+                    <div style=\{{display: "inline-block", padding: "20px"}}>
+                        <label>
+                            <input
+                                name="type"
+                                type="radio"
+                                value="{{option.value}}"
+                                checked={ {{../name}} ===  '{{option.value}}' }
+                                onChange={() => {
+                                    setProductType('{{option.value}}');
+                                    entityChange('{{../name}}', '{{option.value}}');
+                                }}
+                            />&nbsp;{{option.label}}&nbsp;
+                        </label>
+                    </div>
+                    {{/each}}
+                    <span className='invalid-message' style=\{{color: "red"}}>{formErrors['{{name}}']}</span>
+                    {{/ifEquals}}
+                </Row>
+            {{/each}}
+            <div className='add-{{ModelNameLowerCase}}-actions'>
+                <Button type='submit' text='Add {{ModelName}}' />
+            </div>
+        </form>
     );
 };
 
