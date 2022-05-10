@@ -82,11 +82,13 @@ You can also provide a custom configuration file to define the model's schema an
 
 After running install, you will need to do the following:
 
-- Add credits actions import to client/app/actions.js
-- Add credits reducer to client/app/reducers.js
-- Add credits routes to server/routes/api/index.js
-- Add link to client/containers/Dashboard/links.json
-- Add Credit import to client/app/components/Manager/Dashboard/Admin.js
+**NOTE** `Credits` is just an example. This should be the name of _your_ module.
+
+- Add `credits` actions import to `client/app/actions.js`
+- Add `credits` reducer to `client/app/reducers.js`
+- Add `credits` routes to `server/routes/api/index.js`
+- Add link to `client/containers/Dashboard/links.json`
+- Add `Credit` import to `client/app/components/Manager/Dashboard/Admin.js`
 
 ## Examples
 

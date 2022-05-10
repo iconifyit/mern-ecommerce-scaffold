@@ -1,6 +1,6 @@
 {
     "name": "@atomiclotus/mern-ecomm-scaffold",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Scaffold utility for MERN E-commerce by https://github.com/mohamedsamara",
     "main": "cli.js",
     "scripts": {
