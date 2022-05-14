@@ -1,5 +1,7 @@
 # Scaffold Utility for MERN E-commerce
 
+MERN E-comm Scaffold is a scaffolding tool for MERN E-commerce by [Mohamed Samara](https://github.com/mohamedsamara).
+
 ## Description
 
 Scaffold is a utility for scaffolding MERN E-commerce modules. The scaffold will create the DB Schema, the API routes, the Manager module, and the container module. Some manual installation is required but most of the repetitive tasks are fully-automated.
