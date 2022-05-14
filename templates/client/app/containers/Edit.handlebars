@@ -1,0 +1,81 @@
+/*
+ *
+ * Edit {{ModelName}}
+ *
+ */
+
+import React from 'react';
+
+import { connect } from 'react-redux';
+
+import actions from '../../actions';
+
+import Edit{{ModelName}} from '../../components/Manager/Edit{{ModelName}}';
+import SubPage from '../../components/Manager/SubPage';
+import NotFound from '../../components/Common/NotFound';
+
+class Edit extends React.PureComponent {
+  componentDidMount() {
+    this.props.reset{{ModelName}}();
+    this.props.fetch{{ModelName}}(this.props.match.params.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.props.reset{{ModelName}}();
+      this.props.fetch{{ModelName}}(this.props.match.params.id);
+    }
+  }
+
+  render() {
+    const {
+      history,
+      {{ModelNameLowerCase}},
+      formErrors,
+      {{ModelNameLowerCase}}EditChange,
+      update{{ModelName}},
+      delete{{ModelName}},
+      activate{{ModelName}}
+    } = this.props;
+
+    /* NOTE: slewis 2022-04-30
+     * This approach is necessary to avoid bracket 
+     * errors when Handlebars auto-generates the code. 
+     */
+    const editItem = {{ModelNameLowerCase}}EditChange;
+    const updateItem = update{{ModelName}};
+    const deleteItem = delete{{ModelName}};
+    const activateItem = activate{{ModelName}};
+    const item = {{ModelNameLowerCase}};
+
+    return (
+      <SubPage
+        title='Edit {{ModelName}}'
+        actionTitle='Cancel'
+        handleAction={history.goBack}
+      >
+        { item?._id ? (
+          <Edit{{ModelName}}
+            {{ModelNameLowerCase}}={item}
+            formErrors={formErrors}
+            {{ModelNameLowerCase}}Change={editItem}
+            update{{ModelName}}={updateItem}
+            delete{{ModelName}}={deleteItem}
+            activate{{ModelName}}={activateItem}
+          />
+        ) : (
+          <NotFound message='No {{ModelNameLowerCase}} found.' />
+        ) }
+      </SubPage>
+    );
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    {{ModelNameLowerCase}}: state.{{ModelNameLowerCase}}.{{ModelNameLowerCase}},
+    formErrors: state.{{ModelNameLowerCase}}.editFormErrors
+  };
+};
+
+export default connect(mapStateToProps, actions)(Edit);

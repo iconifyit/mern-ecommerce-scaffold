@@ -1,0 +1,142 @@
+/**
+ *
+ * Edit{{ModelName}}
+ *
+ */
+
+import React from 'react';
+
+const uuidv4 = require('uuid/v4');
+
+import Button from '../../Common/Button';
+import { Row, Col } from 'reactstrap';
+import Input from '../../Common/Input';
+import Switch from '../../Common/Switch';
+import SelectOption from '../../Common/SelectOption';
+
+
+const Edit{{ModelName}} = props => {
+    const {
+        user,
+        {{ModelNameLowerCase}},
+        {{ModelNameLowerCase}}Change,
+        formErrors,
+        update{{ModelName}},
+        delete{{ModelName}},
+        activate{{ModelName}}
+    } = props;
+
+    const handleSubmit = event => {
+        event.preventDefault();
+        update{{ModelName}}();
+    };
+
+    /* NOTE: slewis 2022-04-30
+     * This approach is necessary to avoid bracket 
+     * errors when Handlebars auto-generates the code. 
+     */
+    const entityChange = {{ModelNameLowerCase}}Change;
+    const updateItem = update{{ModelName}};
+    const deleteItem = delete{{ModelName}};
+    const activateItem = activate{{ModelName}};
+    const entity = {{ModelNameLowerCase}};
+
+    console.log('Edit{{ModelName}}', {{ModelNameLowerCase}});
+
+    return (
+        <form onSubmit={handleSubmit} noValidate>
+            {{#each fields}}
+                <Row>
+                    {{#ifEquals type "text"}}
+                    <Col xs='12' lg='6'>
+                        <Input
+                            type={'text'}
+                            error={formErrors['{{name}}']}
+                            label={'{{label}}'}
+                            name={'{{name}}'}
+                            placeholder={'{{placeholder}}'}
+                            value={ entity.{{name}} }
+                            onInputChange={(name, value) => {
+                                entityChange(name, value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "number"}}
+                    <Col xs='12' lg='6'>
+                        <Input
+                            type={'number'}
+                            error={formErrors['{{name}}']}
+                            label={'{{label}}'}
+                            name={'{{name}}'}
+                            placeholder={'{{placeholder}}'}
+                            value={ entity.{{name}} }
+                            onInputChange={(name, value) => {
+                                entityChange(name, value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "boolean"}}
+                    <Col xs='12' lg='6'>
+                        <Switch
+                            id={'active-product'}
+                            name={'{{name}}'}
+                            label={'{{label}}'}
+                            checked={ entity.{{name}} }
+                            toggleCheckboxChange={value => entityChange('{{name}}', value)}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "select"}}
+                    <Col xs='12' lg='6'>
+                        <SelectOption
+                            error={formErrors['{{name}}']}
+                            label={'{{label}}'}
+                            multi={false}
+                            value={ entity.{{name}} }
+                            options={ {{options}} }
+                            handleSelectChange={value => {
+                                entityChange('{{name}}', value);
+                            }}
+                        />
+                    </Col>
+                    {{/ifEquals}}
+                    {{#ifEquals type "radio"}}
+                    {{#each options as |option|}} 
+                    <div style=\{{display: "inline-block", padding: "20px"}}>
+                        <label>
+                            <input
+                                name="type"
+                                type="radio"
+                                value="{{option.value}}"
+                                checked={ {{../name}} ===  '{{option.value}}' }
+                                onChange={() => {
+                                    setProductType('{{option.value}}');
+                                    entityChange('{{../name}}', '{{option.value}}');
+                                }}
+                            />&nbsp;{{option.label}}&nbsp;
+                        </label>
+                    </div>
+                    {{/each}}
+                    <span className='invalid-message' style=\{{color: "red"}}>{formErrors['{{name}}']}</span>
+                    {{/ifEquals}}
+                </Row>
+            {{/each}}
+            <div className='d-flex flex-column flex-md-row'>
+                <Button
+                    type='submit'
+                    text='Save'
+                    className='mb-3 mb-md-0 mr-0 mr-md-3'
+                />
+                <Button
+                    variant='danger'
+                    text='Delete'
+                    onClick={() => deleteItem(entity._id)}
+                />
+            </div>
+        </form>
+    );
+};
+
+export default Edit{{ModelName}};

@@ -1,0 +1,32 @@
+{
+    "ROLE_ADMIN": [
+        { "to": "", "name": "Account Details", "group": "account" },
+        { "to": "/security", "name": "Account Security", "group": "account" },
+        { "to": "/product", "name": "Icons", "group": "items" },
+        { "to": "/category", "name": "Categories", "group": "items" },
+        { "to": "/family", "name": "Families", "group": "items" },
+        { "to": "/set", "name": "Sets", "group": "items" },
+        { "to": "/orders", "name": "Orders", "group": "orders" },
+        { "to": "/users", "name": "Users", "group": "orders" },
+        {{#each customModules as |theModule|}}
+        { "to": "/{{theModule.name}}", "name": "{{theModule.className}}", "group": "orders" },
+        {{/each}}
+        { "to": "/support", "name": "Support", "group": "support" }
+    ],
+    "ROLE_MERCHANT": [
+        { "to": "", "name": "Account Details", "group": "account" },
+        { "to": "/security", "name": "Account Security", "group": "account" },
+        { "to": "/product", "name": "Icons", "group": "items" },
+        { "to": "/family", "name": "Families", "group": "items" },
+        { "to": "/set", "name": "Sets", "group": "items" },
+        { "to": "/orders", "name": "Orders", "group": "orders" },
+        { "to": "/support", "name": "Support", "group": "support" }
+    ],
+    "ROLE_MEMBER": [
+        { "to": "", "name": "Account Details", "group": "account" },
+        { "to": "/security", "name": "Account Security", "group": "account" },
+        { "to": "/orders", "name": "Orders", "group": "orders" },
+        { "to": "/wishlist", "name": "WishList", "group": "other" },
+        { "to": "/support", "name": "Support", "group": "other" }
+    ]
+}

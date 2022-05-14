@@ -20,6 +20,16 @@ Scaffold uses a two-step approach so that you are in complete control and no cha
 
 Scaffold includes a layer of abstrction that MERN E-commerce does not, however, this layer can be used right alongside the existing architecture and both will work. The changes are, specifically, an API Router superclass, a Schema superclass, and ManagerForm superclass. These additions are NOT breaking changes to MERN E-commerce and can be easily added or removed without affecting the existing code.
 
+Scaffold will add the new module to your admin menu when you run the `install` step. You should be aware that Scaffold modifies the core MERN E-commerce code. If you are not familiar with the code, you should not run the `install` step. That said, you can always roll back the changes by running the `uninstall` command. The modified core code will be restored to its previous state.
+
+### The modified files
+
+- Module actions is added to actions import to `client/app/actions.js`
+- Module reducer is added to reducer in `client/app/reducers.js`
+- Module route is added to routes in `server/routes/api/index.js`
+- Module link added to `client/containers/Dashboard/links.json`
+- Module import added to `client/app/components/Manager/Dashboard/Admin.js`
+
 ## Usage
 
 Scaffold is a two-step process. First, you stage a module by running:
@@ -76,19 +86,39 @@ You can also provide a custom configuration file to define the model's schema an
 - `default`: The default value for the field.
 - `placeholder`: The placeholder text that will be displayed to the user.
 
-**NOTE** I will add more features to the configuration file in the future including more fine-grained control over `fields` including adding validators, and any supported HTML attributes.
+## Preview Template Output
 
-## Post-install
+You can preview the output of any scaffold file by running 
 
-After running install, you will need to do the following:
+```node ./preview.js -m <modelName> -t <templateName>```.
 
-**NOTE** `Credits` is just an example. This should be the name of _your_ module.
+The preview is written to the terminal but no files are created. This is for preview only.
 
-- Add `credits` actions import to `client/app/actions.js`
-- Add `credits` reducer to `client/app/reducers.js`
-- Add `credits` routes to `server/routes/api/index.js`
-- Add link to `client/containers/Dashboard/links.json`
-- Add `Credit` import to `client/app/components/Manager/Dashboard/Admin.js`
+### Available preview commands:
+
+- `schema`: The schema template.
+- `api-routes`: The api routes template.
+- `actions`: The module's actions React actions
+- `add`: The module's Add container 
+- `edit`: The module's Edit container
+- `list`: The module's List container
+- `constants`: The module's constants
+- `container`: The module's container index file
+- `reducer`: The module's reducer
+- `add-$name`: The module's Add Manager component. Replace $name with your module name 
+- `edit-$name`: The module's Edit Manager component. Replace $name with your module name
+- `list-$name`: The module's List Manager component. Replace $name with your module name
+- `app-actions`: The app's actions file
+- `app-reducers`: The app's reducers file
+- `api-routes`: The app's api routes file
+- `admin-dashboard`: The app's admin dashboard file
+- `customer-dashboard`: The app's customer dashboard file
+- `merchant-dashboard`: The app's merchant dashboard file
+- `nav-links`: The app's nav links JSON file
+
+## Roadmap
+
+I will add more features to the configuration file in the future including more fine-grained control over `fields` including adding validators, and any supported HTML attributes.
 
 ## Examples
 

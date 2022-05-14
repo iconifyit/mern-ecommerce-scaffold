@@ -1,8 +1,13 @@
 const fs = require('fs'),
     path = require('path'),
     tracer = require('tracer'),
-    mkdirp = require('mkdirp')
-
+    mkdirp = require('mkdirp'),
+    HandleParser = require('./HandleParser'),
+    { exit } = require('process'),
+    Inflector = require('inflected'),
+    logger = require('./logger')
+    ;
+    
 /**
  * Usage function.
  */
@@ -68,9 +73,10 @@ const pollutionTest = (templates) => {
     let artifacts = [];
     templates.forEach((template) => {
         const {
-            dest
+            dest,
+            overwrite
         } = template;
-        if (fs.existsSync(dest)) {
+        if (fs.existsSync(dest) && ! overwrite) {
             isPolluted = true;
             artifacts.push(dest);
         }
@@ -81,27 +87,156 @@ const pollutionTest = (templates) => {
     };
 };
 
+// /**
+//  * Sets up the logger.
+//  * @param {string} logfile 
+//  * @returns <object>
+//  */
+// const getLogger = (logfile) => {
+//     mkdirp.sync(path.join(__dirname, 'logs'));
+//     return tracer.console({
+//         transport: (data) => {
+//             console.log(data.output)
+//             fs.appendFile(logfile, data.rawoutput + '\n', err => {
+//                 if (err) throw err
+//             })
+//         }
+//     });
+// };
+
+// const kTIMESTAMP = new Date().getTime();
+// const logger = getLogger(`./logs/${kTIMESTAMP}.log`);
+
 /**
- * Sets up the logger.
- * @param {string} logfile 
- * @returns <object>
+ * Validates that a custom module exists.
+ * @param {string} name 
+ * @returns 
  */
-const getLogger = (logfile) => {
-    mkdirp.sync(path.join(__dirname, 'logs'));
-    return tracer.console({
-        transport: (data) => {
-            console.log(data.output)
-            fs.appendFile(logfile, data.rawoutput + '\n', err => {
-                if (err) throw err
-            })
-        }
+const validateCustomModule = (customModules, name) => {
+    const found = getCustomModule(customModules, name);
+    return !! found;
+}
+
+/**
+ * Retrieves the custom module object from the storage JSON.
+ * @param {string} name 
+ * @returns object
+ */
+const getCustomModule = (customModules, name) => {
+    const found = customModules.modules.find((m) => {
+        return m.name.toLowerCase() === name.toLowerCase();
     });
-};
+    return found;
+}
+
+/**
+ * Stages the module file.
+ * @param {string} stagingPath 
+ * @param {string} content 
+ */
+const doStageModuleFile = (stagingPath, content) => {
+    mkdirp.sync(path.dirname(stagingPath));
+    fs.writeFileSync(stagingPath, content);
+}
+
+/**
+ * Copies staged module file to live install.
+ * @param {string} stagingPath 
+ * @param {string} livePath 
+ */
+const doLiveModuleFile = (stagingPath, livePath) => {
+    mkdirp.sync(path.dirname(livePath));
+    fs.copyFileSync(stagingPath, livePath);
+}
+
+/**
+ * Validates that a file exists.
+ * @param {string} path 
+ */
+const validatePath = (path) => {
+    if (!fs.existsSync(path)) {
+        logger.log(`\x1b[31m\n${path} does not exist.\x1b[0m`);
+        exit(0);
+    }
+}
+
+/**
+ * Uninstalls a previously-installed module.
+ * @param {string} modelName 
+ * @param {string} livePath 
+ * @param {boolean} isDryRun 
+ */
+// src, modelName, config, customModules, isDryRun
+const doUninstallModuleFile = (modelName, livePath, isDryRun) => {
+    logger.log(`Uninstalling ${livePath}`);
+    let theFolder = path.dirname(livePath);
+    let folderName = path.basename(theFolder);
+    if (! isDryRun && fs.existsSync(livePath)) {
+        fs.unlinkSync(livePath);
+        if (folderName.toLowerCase() === modelName.toLowerCase()) {
+            if (fs.readdirSync(theFolder).length === 0) {
+                logger.log(`DELETING folder ${theFolder}`)
+                // fs.rmdirSync(theFolder);
+            }
+        }
+    }
+}
+
+/**
+ * Restores an installed custom module file to its previous state.
+ * @param {string} src 
+ * @param {string} modelName 
+ * @param {string} livePath 
+ * @param {boolean} isDryRun 
+ */
+const doRestoreModuleFile = (src, modelName, livePath, isDryRun) => {
+    logger.log(`Restoring ${livePath}`);
+    if (! isDryRun) {
+        if (fs.existsSync(livePath)) {
+            fs.unlinkSync(livePath);
+        }
+        const content = getCompiledTemplate(
+            src, 
+            modelName, 
+            {fields:[], schemaFields:[]}, 
+            {modules:[]}
+        );
+        fs.writeFileSync(livePath, content);
+    }
+}
+
+/**
+ * Compiles the HandleBars template.
+ * @param {string} src              The template source path.
+ * @param {string} modelName        The model name.
+ * @param {object} config           The configuration object.
+ * @param {object} customModules    The custom modules object.
+ * @returns 
+ */
+const getCompiledTemplate = (src, modelName, config, customModules) => {
+    return new HandleParser(src, {
+        ModelName: modelName,
+        ModelNameUpperCase: modelName.toUpperCase(),
+        ModelNameLowerCase: modelName.toLowerCase(),
+        ModelNamePlural: Inflector.pluralize(modelName),
+        ModelNamePluralUpperCase: Inflector.pluralize(modelName).toUpperCase(),
+        ModelNamePluralLowerCase: Inflector.pluralize(modelName).toLowerCase(),
+        fields: config.fields,
+        schemaFields: config.schemaFields,
+        customModules: customModules.modules
+    }).toString();
+}
 
 module.exports = {
     ucWords,
     usage,
     validateArgs,
     pollutionTest,
-    getLogger
+    validateCustomModule,
+    getCustomModule,
+    doStageModuleFile,
+    doLiveModuleFile,
+    validatePath,
+    doUninstallModuleFile,
+    getCompiledTemplate
 }

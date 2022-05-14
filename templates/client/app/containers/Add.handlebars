@@ -1,0 +1,60 @@
+/*
+ *
+ * Add {{ModelName}}
+ *
+ */
+
+import React from 'react';
+
+import { connect } from 'react-redux';
+
+import actions from '../../actions';
+
+import Add{{ModelName}} from '../../components/Manager/Add{{ModelName}}';
+import SubPage from '../../components/Manager/SubPage';
+
+class Add extends React.PureComponent {
+  componentDidMount() {}
+
+  render() {
+    const {
+      history,
+      {{ModelNameLowerCase}}FormData,
+      formErrors,
+      {{ModelNameLowerCase}}Change,
+      add{{ModelName}}
+    } = this.props;
+
+    /* NOTE: slewis 2022-04-30
+     * This approach is necessary to avoid bracket 
+     * errors when Handlebars auto-generates the code. 
+     */
+    const changeItem = {{ModelNameLowerCase}}Change;
+    const addItem = add{{ModelName}};
+    const formData = {{ModelNameLowerCase}}FormData;
+
+    return (
+      <SubPage
+        title='Add {{ModelName}}'
+        actionTitle='Cancel'
+        handleAction={() => history.goBack()}
+      >
+        <Add{{ModelName}}
+          {{ModelNameLowerCase}}FormData={formData}
+          formErrors={formErrors}
+          {{ModelNameLowerCase}}Change={changeItem}
+          add{{ModelName}}={addItem}
+        />
+      </SubPage>
+    );
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    {{ModelNameLowerCase}}FormData: state.{{ModelNameLowerCase}}.{{ModelNameLowerCase}}FormData,
+    formErrors: state.{{ModelNameLowerCase}}.formErrors
+  };
+};
+
+export default connect(mapStateToProps, actions)(Add);

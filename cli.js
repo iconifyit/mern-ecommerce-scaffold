@@ -19,12 +19,21 @@ const fs = require('fs'),
         usage,
         validateArgs,
         pollutionTest,
-        getLogger,
-        ucWords
-    } = require('./utils');
+        ucWords,
+        validateCustomModule,
+        getCustomModule,
+        doStageModuleFile,
+        doLiveModuleFile,
+        validatePath,
+        doUninstallModuleFile,
+        getCompiledTemplate
+    } = require('./utils'),
+    customModules = require('./customModules.json'),
+    logger = require('./logger')
 
-const timestamp = new Date().getTime();
-const logger = getLogger(`./logs/${timestamp}.log`);
+const navLinks = require('./templates/client/app/containers/Dashboard/links.json');
+
+// ==========================================================================================
 
 /*
  * Capture CLI arguments.
@@ -41,9 +50,11 @@ const requiredArgs = ['m'];
  */
 const allLegalArgs = [].concat(legalArgs, ['_', 'h']);
 
-if (!validateArgs(args, allLegalArgs, requiredArgs)) {
+if (! validateArgs(args, allLegalArgs, requiredArgs)) {
     usage();
 }
+
+// ==========================================================================================
 
 const modelName = args.m;
 let IS_DRY_RUN = args.d || false;
@@ -53,13 +64,10 @@ let IS_STAGING = args.s || (!IS_DRY_RUN && !IS_INSTALL && !IS_UNINSTALL);
 let IS_CLEAN = args.c || false;
 let IS_FORCE = args.force || false;
 
-let config = {};
+let config = require(`./configs/default.config.js`, 'utf8');
 try {
     config = require(`./configs/${modelName.toLowerCase()}.config.js`, 'utf8');
-}
-catch (e) {
-    logger.error(e);
-}
+} catch (e) {}
 
 if (IS_DRY_RUN) {
     IS_INSTALL = false;
@@ -87,15 +95,18 @@ if (IS_FORCE && IS_INSTALL) {
     usage();
 }
 
+// ==========================================================================================
+
 /*
  * Load the templates list
-*/
+ */
 templates = require('./templates.js')(ucWords(modelName));
 
 /*
  * Test if some artifacts already exist.
-*/
+ */
 const { isPolluted, artifacts } = pollutionTest(templates);
+
 if (!IS_UNINSTALL && isPolluted) {
     if (!IS_FORCE && IS_STAGING) {
         logger.log(
@@ -108,19 +119,32 @@ if (!IS_UNINSTALL && isPolluted) {
 
 /*
  * Set the staging area.
-*/
+ */
 const stagingDir = path.join('./stage/', modelName.toLowerCase());
-if ((IS_STAGING && IS_CLEAN)) {
+if ((IS_STAGING && IS_CLEAN && !IS_DRY_RUN)) {
     fs.rmSync(stagingDir, { recursive: true, force: true });
 }
-mkdirp.sync(stagingDir);
+if (! IS_DRY_RUN) mkdirp.sync(stagingDir);
 
 /*
  * Loop through the templates.
-*/
-logger.log('\n');
-logger.log(`MODE : ${IS_DRY_RUN ? 'DRY RUN' : IS_INSTALL ? 'INSTALL' : 'STAGING'}`);
+ */
+logger.log(`\nMODE : ${IS_DRY_RUN ? 'DRY RUN' : IS_INSTALL ? 'INSTALL' : 'STAGING'}`);
 logger.log(`MODEL: ${modelName}\n`);
+
+// ==========================================================================================
+
+if (IS_STAGING && ! getCustomModule(customModules, modelName)) {
+    customModules.modules.push({
+        name: modelName.toLowerCase(),
+        className: ucWords(modelName),
+    });    
+    fs.writeFileSync('./customModules.json', JSON.stringify(customModules, null, 2));
+}
+
+console.log('customModules', customModules);
+
+// ==========================================================================================
 
 templates.forEach((template) => {
     try {
@@ -131,43 +155,43 @@ templates.forEach((template) => {
         let outputPath = IS_INSTALL ? livePath : stagingPath;
 
         if (IS_UNINSTALL) {
-            logger.log(`Uninstalling ${livePath}`);
-            let theFolder = path.dirname(livePath);
-            let folderName = path.basename(theFolder);
-            if (!IS_DRY_RUN) {
-                fs.unlinkSync(livePath);
-                if (folderName.toLowerCase() === modelName.toLowerCase()) {
-                    if (fs.readdirSync(theFolder).length === 0) {
-                        logger.log(`DELETING folder ${theFolder}`)
-                        // fs.rmdirSync(theFolder);
-                    }
-                }
+            if (! validateCustomModule(customModules, modelName)) {
+                logger.log(`\x1b[31m\nModule ${modelName} does not exist.\x1b[0m`);
+                exit(0);
             }
+            // doUninstallModuleFile(modelName, livePath, IS_DRY_RUN);
+            
+            if (template.overwrite) {
+                doRestoreModuleFile(src, modelName, dest, IS_DRY_RUN);
+            }
+            else {
+                doUninstallModuleFile(modelName, dest, IS_DRY_RUN);
+                // doUninstallModuleFile(src, modelName, config, customModules, IS_DRY_RUN);
+            }
+            
         }
         else if (IS_DRY_RUN) {
-            logger.log(`${src} -> ${outputPath}`);
+            logger.log(`${src} -> \n${outputPath}\n\n`);
         }
         else {
-            const content = new HandleParser(src, {
-                ModelName: modelName,
-                ModelNameUpperCase: modelName.toUpperCase(),
-                ModelNameLowerCase: modelName.toLowerCase(),
-                ModelNamePlural: Inflector.pluralize(modelName),
-                ModelNamePluralUpperCase: Inflector.pluralize(modelName).toUpperCase(),
-                ModelNamePluralLowerCase: Inflector.pluralize(modelName).toLowerCase(),
-                fields: config.fields,
-                schemaFields: config.schemaFields
-            }).toString();
-
             if (IS_STAGING) {
-                logger.log(`Staging ${outputPath}`);
-                mkdirp.sync(path.dirname(stagingPath));
-                fs.writeFileSync(outputPath, content);
+                logger.log(`Staging ${stagingPath}`);
+                doStageModuleFile(
+                    stagingPath, 
+                    getCompiledTemplate(src, modelName, config, customModules)
+                );
             }
             else if (IS_INSTALL) {
                 logger.log(`Installing ${outputPath}`);
-                mkdirp.sync(path.dirname(livePath));
-                fs.copyFileSync(stagingPath, livePath);
+                if (! fs.existsSync(stagingPath)) {
+                    logger.log(`\x1b[31m\nPath ${stagingPath} does not exist.\x1b[0m`);
+                    exit(0);
+                }
+                if (! validateCustomModule(customModules, modelName)) {
+                    logger.log(`\x1b[31m\nModule ${modelName} does not exist.\x1b[0m`);
+                    exit(0);
+                }
+                doLiveModuleFile(stagingPath, livePath);
             }
         }
     }
@@ -175,6 +199,5 @@ templates.forEach((template) => {
         logger.log(`Error: ${err}`);
     }
 });
-logger.log('\n');
-logger.log('\x1b[32m  Finit! \x1b[0m')
-logger.log('\n');
+logger.log('\n\x1b[32m  Finit! \x1b[0m\n')
+
